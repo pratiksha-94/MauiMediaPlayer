@@ -1,41 +1,221 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MauiMediaPlayer.MainPage">
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="MauiMediaPlayer.MainPage"
+             xmlns:sliders="clr-namespace:Syncfusion.Maui.Sliders;assembly=Syncfusion.Maui.Sliders"
+             xmlns:local="clr-namespace:MauiMediaPlayer">
 
-    <ScrollView>
-        <VerticalStackLayout
-            Spacing="25"
-            Padding="30,0"
-            VerticalOptions="Center">
+    <ContentPage.Resources>
+        <x:String x:Key="PlayIcon">&#x000F040D;</x:String>
+        <x:String x:Key="PauseIcon">&#x000F03E6;</x:String>
+        <x:String x:Key="StopIcon">&#x000F0667;</x:String>
+        <x:String x:Key="FowardIcon">&#x000F0D71;</x:String>
+        <x:String x:Key="BackwardIcon">&#x000F0D2A;</x:String>
+        <x:String x:Key="MuteIcon">&#x000F057E;</x:String>
+        <x:String x:Key="VolumeIcon">&#x000F057E;</x:String>
+        <x:String x:Key="InfoIcon">&#x000F02FD;</x:String>
+        <x:String x:Key="SpeedIcon">&#x000F04C5;</x:String>
+        <x:String x:Key="FullScreenIcon">&#x000F0293;</x:String>
+        <x:String x:Key="NormalScreenIcon">&#x000F0294;</x:String>
+        <OnPlatform x:Key="IconSize" x:TypeArguments="x:Double">
+            <On Platform="Android" Value="30"/>
+            <On Platform="WinUI" Value="25"/>
+        </OnPlatform>
+    </ContentPage.Resources>
+    <Grid   IsClippedToBounds="True" 
+            IsVisible="{OnPlatform Android=True,WinUI=True,iOS=False,MacCatalyst=True}">
+        <Grid.GestureRecognizers>
+            <TapGestureRecognizer Command="{Binding TapCommand}"
+                                      CommandParameter="{x:Reference Toolbar}"/>
+        </Grid.GestureRecognizers>
+        <!--<Grid.GestureRecognizers>
+            <PointerGestureRecognizer PointerEntered="PointerGestureRecognizer_PointerEntered"
+                                      PointerExited="PointerGestureRecognizer_PointerExited"/>
+        </Grid.GestureRecognizers>-->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <toolkit:MediaElement 
+            x:Name="mediaElement"
+            Source="embed://video.mp4"
+            ShouldShowPlaybackControls="False"
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill"/>
+        <VerticalStackLayout Grid.Row="1"
+                             x:Name="Toolbar">
+            <Grid  IsVisible="{Binding ShowProgress}" 
+                   Padding="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Label FontAttributes="Bold"
+                   VerticalOptions="Center"
+                   HorizontalTextAlignment="Start"
+                   BindingContext="{x:Reference mediaElement}">00:00:00</Label>
+                <sliders:SfSlider  Minimum="50" 
+                                   Maximum="100"
+                                   Grid.Column="1">
+                    <sliders:SfSlider.ThumbStyle>
+                        <sliders:SliderThumbStyle Fill="orangered"/>
+                    </sliders:SfSlider.ThumbStyle>
+                    <sliders:SfSlider.ThumbOverlayStyle>
+                        <sliders:SliderThumbOverlayStyle Radius="18"/>
+                    </sliders:SfSlider.ThumbOverlayStyle>
+                    <sliders:SfSlider.TrackStyle>
+                        <sliders:SliderTrackStyle ActiveFill="orangered"/>
+                    </sliders:SfSlider.TrackStyle>
+                </sliders:SfSlider>
+                <!--<Label x:Name=  "PlayerProgressText"
+                        FontAttributes="Bold"
+                        VerticalOptions="Center"
+                        Grid.Column="2"
+                        Margin="0,0,5,0"
+                        HorizontalTextAlignment="Start"
+                        BindingContext="{x:Reference mediaElement}">00:00:00</Label>-->
+            </Grid>
+            <HorizontalStackLayout 
+            HorizontalOptions="Center"
+            VerticalOptions="End"
+            Spacing="2"
+            Grid.Row="1"
+            BindingContext="{x:Reference mediaElement}">
+                <VerticalStackLayout>
+                    <ImageButton Source="{FontImage &#x000F040D;,
+                                 FontFamily=MaterialDesign-Icon,
+                                 Color=#000000,Size={StaticResource IconSize}}" 
+                                 IsVisible="True"
+                                 x:Name="PlayButton"
+                                 Aspect="AspectFit"
+                                 Clicked="PlayButton_Clicked">
+                    </ImageButton>
+                    <!--<Label Text="Play" FontSize="15" FontAttributes="Bold" HorizontalTextAlignment="Center" />-->
+                </VerticalStackLayout>
+                <VerticalStackLayout>
+                    <ImageButton Source="{FontImage &#x000F03E6;,
+                                 FontFamily=MaterialDesign-Icon,
+                                 Color=#000000,Size={StaticResource IconSize}}"  
+                                 IsVisible="True"
+                                 Aspect="AspectFit"
+                                 Clicked="PauseButton_Clicked">
+                    </ImageButton>
+                    <!--<Label Text="Pause" FontSize="10" FontAttributes="Bold" HorizontalTextAlignment="Center"/>-->
+                </VerticalStackLayout>
+                <VerticalStackLayout>
+                    <ImageButton  Source="{FontImage &#x000F0667;,
+                                      FontFamily=MaterialDesign-Icon,
+                                      Color=#000000, Size={StaticResource IconSize}}"
+                                      IsVisible="True"
+                                      Aspect="AspectFit"
+                                      Clicked="StopButton_Clicked"/>
+                    <!--<Label Text="Stop" FontSize="10" FontAttributes="Bold" HorizontalTextAlignment="Center"/>-->
+                </VerticalStackLayout>
+                <VerticalStackLayout>
+                    <ImageButton  Source="{FontImage &#x000F0D71;,
+                                  FontFamily=MaterialDesign-Icon,
+                                  Color=#000000,Size={StaticResource IconSize}}"
+                                  IsVisible="True"
+                                  Aspect="AspectFit"/>
+                    <!--<Label Text="Forward" FontSize="10" FontAttributes="Bold" HorizontalTextAlignment="Center"/>-->
+                </VerticalStackLayout>
+                <VerticalStackLayout>
+                    <ImageButton  Source="{FontImage &#x000F0D2A;,
+                                  FontFamily=MaterialDesign-Icon,
+                                  Color=#000000,Size={StaticResource IconSize}}"
+                                  IsVisible="True"
+                                  Aspect="AspectFit"/>
+                    <!--<Label Text="Backward" FontSize="10" FontAttributes="Bold" HorizontalTextAlignment="Center" />-->
+                </VerticalStackLayout>
 
-            <Image
-                Source="dotnet_bot.png"
-                SemanticProperties.Description="Cute dot net bot waving hi to you!"
-                HeightRequest="200"
-                HorizontalOptions="Center" />
+                <VerticalStackLayout>
+                    <VerticalStackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding TapVolumeCommand}"
+                                              CommandParameter="{x:Reference VolumeControl}"/>
+                    </VerticalStackLayout.GestureRecognizers>
+                    <ImageButton  Source="{FontImage &#x000F057E;,
+                                  FontFamily=MaterialDesign-Icon,
+                                  Color=#000000,Size={StaticResource IconSize}}"
+                                  IsVisible="True"
+                                  x:Name="Volume"
+                                  Aspect="AspectFit"/>
 
-            <Label
-                Text="Hello, World!"
-                SemanticProperties.HeadingLevel="Level1"
-                FontSize="32"
-                HorizontalOptions="Center" />
-
-            <Label
-                Text="Welcome to .NET Multi-platform App UI"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I"
-                FontSize="18"
-                HorizontalOptions="Center" />
-
-            <Button
-                x:Name="CounterBtn"
-                Text="Click me"
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="OnCounterClicked"
-                HorizontalOptions="Center" />
-
+                    <!--<Label Text="Mute" FontSize="10" FontAttributes="Bold" HorizontalTextAlignment="Center" />-->
+                </VerticalStackLayout>
+                <VerticalStackLayout Padding="2" 
+                                     x:Name="VolumeControl">
+                    <HorizontalStackLayout>
+                        <ImageButton  Source="{FontImage &#x000F057E;,
+                                          FontFamily=MaterialDesign-Icon,
+                                          Color=#000000,Size={StaticResource IconSize}}"
+                                          Aspect="AspectFit"/>
+                        <Slider       Maximum="10"
+                                          Minimum="0"
+                                          WidthRequest="100"
+                                          VerticalOptions="Center"
+                                          MinimumTrackColor="#F28A30"
+                                          MaximumTrackColor="#F28A30"
+                                          ThumbColor="#F28A30"/>
+                    </HorizontalStackLayout>
+                    <!--<Label Text="Volume" FontSize="10" FontAttributes="Bold" VerticalOptions="End" HorizontalOptions="Fill" BackgroundColor="CornflowerBlue" HorizontalTextAlignment="Center"/>-->
+                </VerticalStackLayout>
+                <VerticalStackLayout>
+                    <ImageButton  Source="{FontImage &#x000F02FD;,
+                                  FontFamily=MaterialDesign-Icon,
+                                  Color=#000000,Size={StaticResource IconSize}}"
+                                  IsVisible="True"
+                                  Aspect="AspectFit"/>
+                    <!--<Label Text="Info" FontSize="10" FontAttributes="Bold" HorizontalTextAlignment="Center"/>-->
+                </VerticalStackLayout>
+                <VerticalStackLayout>
+                    <ImageButton   Source="{FontImage &#x000F04C5;,
+                                       FontFamily=MaterialDesign-Icon,
+                                       Color=#000000,Size={StaticResource IconSize}}"
+                                       IsVisible="True"
+                                       Aspect="AspectFit"/>
+                    <!--<Label Text="Speed" FontSize="10" FontAttributes="Bold" HorizontalTextAlignment="Center" />-->
+                </VerticalStackLayout>
+                <VerticalStackLayout>
+                    <ImageButton   Source="{FontImage &#x000F0293;,
+                                       FontFamily=MaterialDesign-Icon,
+                                       Color=#000000,Size={StaticResource IconSize}}"
+                                       IsVisible="True"
+                                       Aspect="AspectFit"
+                                       Clicked="StrechScreen_Clicked"
+                                       x:Name="StrechScreen"/>
+                    <!--<Label Text="Screen" FontSize="10" FontAttributes="Bold" HorizontalTextAlignment="Center" />-->
+                </VerticalStackLayout>
+                <!--<VerticalStackLayout>
+                        <ImageButton  Source="{FontImage &#x000F0294;,
+                                       FontFamily=MaterialDesign-Icon,
+                                       Color=#1E3054,Size={StaticResource IconSize}}"
+                                       IsVisible="{Binding ShowNormal}"
+                                       x:Name="NormalScreen"
+                                       Clicked="NormalScreen_Clicked"
+                                       Aspect="AspectFit"/>
+                    -->
+                <!--<Label Text="Screen" FontSize="10" FontAttributes="Bold" HorizontalTextAlignment="Center"/>-->
+                <!--
+                </VerticalStackLayout>-->
+            </HorizontalStackLayout>
         </VerticalStackLayout>
-    </ScrollView>
-
+    </Grid>
 </ContentPage>
+
+    
+
+      
+            
+       
+       
+           
+
+              
+               
+
+      
+  
+
+   
